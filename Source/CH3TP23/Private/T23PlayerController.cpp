@@ -1,5 +1,6 @@
 #include "T23PlayerController.h"
 #include "EnhancedInputSubsystems.h"
+#include "Blueprint/UserWidget.h"
 
 AT23PlayerController::AT23PlayerController()
 	:InputMappingContext(nullptr),
@@ -24,6 +25,15 @@ void AT23PlayerController::BeginPlay()
 			{
 				Subsystem->AddMappingContext(InputMappingContext, 0);
 			}
+		}
+	}
+
+	if (HUDWidgetClass)
+	{
+		UUserWidget* HUDWidget = CreateWidget<UUserWidget>(this, HUDWidgetClass);
+		if (HUDWidget)
+		{
+			HUDWidget->AddToViewport();
 		}
 	}
 }
