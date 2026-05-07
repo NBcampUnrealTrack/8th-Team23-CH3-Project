@@ -23,9 +23,9 @@ AT23Character::AT23Character()
 
 	 
 	
-	 NormalSpeed = 500.0f;
+	 NormalSpeed = 250.0f;
 	
-	 SprintSpeedMultiplier = 1.5f;
+	 SprintSpeedMultiplier = 2.0f;
 	 
 	 SprintSpeed = NormalSpeed * SprintSpeedMultiplier;
 
