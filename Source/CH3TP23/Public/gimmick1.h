@@ -18,6 +18,7 @@ protected:
 	UPROPERTY(EditAnywhere)
 	int32 MovementType = 0;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "gimmick1|Components")
 	USceneComponent* SceneRoot;
 	UStaticMeshComponent* StaticMeshComp;
 
@@ -31,11 +32,13 @@ protected:
 	virtual void Tick(float DeltaTime) override; // 모든 프레임 호출
 
 protected:
-	UPROPERTY(VisibleAnywhere, Category = "Gimmick")
+	
+	UPROPERTY(VisibleAnywhere, Category = "Gimmick1")
 	class UBoxComponent* CollisionBox;
 
-	UPROPERTY(EditAnywhere, Category = "Gimmick")
+	UPROPERTY(EditAnywhere, Category = "Gimmick1")
 	float JumpStrength = 750.0f;
+	float WindStrength = 100.f; // 선풍기 밀어내는 힘
 
 	UFUNCTION()
 	void OnOverlapBegin(UPrimitiveComponent* OverlappedComp
@@ -45,4 +48,12 @@ protected:
 		, bool bFromSweep
 		, const FHitResult& SweepResult);
 
+protected:
+	UPROPERTY(EditAnywhere, Category = "Spawn")
+	TSubclassOf<AActor> ActorClassToSpawn;
+
+	UPROPERTY(EditAnywhere, Category = "Spawn")
+	float SpawnInterval = 0.5f;
+
+	float SpawnTimer = 0.f;
 };

@@ -4,6 +4,7 @@
 #include "gimmick1.h"
 #include "Components/BoxComponent.h"
 #include "GameFramework/Character.h"
+#include "GameFramework/CharacterMovementComponent.h"
 
 Agimmick1::Agimmick1()
 {
@@ -41,9 +42,9 @@ void Agimmick1::BeginPlay()
 {
 	Super::BeginPlay();
 
-	SetActorLocation(FVector(0.0f, 0.0f, 90.0f));
-	SetActorRotation(FRotator(0.0f, 0.0f, 0.0f));
-	SetActorScale3D(FVector(2.0f));
+	//SetActorLocation(FVector(0.0f, 0.0f, 90.0f));
+	//SetActorRotation(FRotator(0.0f, 0.0f, 0.0f));
+	//SetActorScale3D(FVector(2.0f));
 
 	StartLocation = GetActorLocation();
 }
@@ -65,10 +66,32 @@ void Agimmick1::Tick(float DeltaTime)
 		NewLocation.X += Movement;
 		SetActorLocation(NewLocation);
 
-		AddActorLocalOffset(FVector(0.0f, 100.0f, 160.0f));
+		//AddActorLocalOffset(FVector(0.0f, 100.0f, 160.0f));
 	}
 
+	else if (MovementType == 3)
+	{
+		TArray<AActor*> OverlappingActors;
+		CollisionBox->GetOverlappingActors(OverlappingActors, ACharacter::StaticClass());
+		for (AActor* Actor : OverlappingActors)
+		{
+			if (ACharacter* Character = Cast<ACharacter>(Actor))
+			{
+				Character->GetCharacterMovement()->AddInputVector(GetActorForwardVector() * WindStrength);
+			}
+		}
+	}
 
+	else if (MovementType == 4)
+	{
+		SpawnTimer += DeltaTime;
+		if (SpawnTimer >= SpawnInterval && ActorClassToSpawn)
+		{
+			SpawnTimer = 0.f;
+			FVector SpawnPos = GetActorLocation() + FVector(FMath::RandRange(-200.f, 200.f), FMath::RandRange(-200.f, 200.f), 0.f);
+			GetWorld()->SpawnActor<AActor>(ActorClassToSpawn, SpawnPos, FRotator::ZeroRotator);
+		}
+	}
 }
 
 void Agimmick1::OnOverlapBegin(UPrimitiveComponent* OverlappedComp
@@ -84,7 +107,8 @@ void Agimmick1::OnOverlapBegin(UPrimitiveComponent* OverlappedComp
 
 		if (Character)
 		{
-			Character->LaunchCharacter(FVector(0, 0, JumpStrength), false, true);
+			FVector LaunchDirection = GetActorUpVector() * JumpStrength;
+			Character->LaunchCharacter(LaunchDirection, false, true);
 		}
 	}
 }
