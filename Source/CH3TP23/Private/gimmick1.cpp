@@ -10,24 +10,13 @@ Agimmick1::Agimmick1()
 {
 	SceneRoot = CreateDefaultSubobject<USceneComponent>(TEXT("SceneRoot"));
 	SetRootComponent(SceneRoot);
+	SceneRoot->SetMobility(EComponentMobility::Movable);
 
-	StaticMeshComp = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("StaticMesh")); //CreateDefaultSubobject 컴포넌트를 생성
+	StaticMeshComp = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("StaticMesh"));
 	StaticMeshComp->SetupAttachment(SceneRoot);
 
-	static ConstructorHelpers::FObjectFinder<UStaticMesh> MeshAsset(TEXT("/Game/Resources/Props/SM_Shelf.SM_Shelf"));
-	if (MeshAsset.Succeeded())
-	{
-		StaticMeshComp->SetStaticMesh(MeshAsset.Object);
-	}
-
-	static ConstructorHelpers::FObjectFinder<UMaterial> MaterialAsset(TEXT("/Game/Resources/Materials/M_Metal_Steel.M_Metal_Steel"));
-	if (MaterialAsset.Succeeded())
-	{
-		StaticMeshComp->SetMaterial(0, MaterialAsset.Object);
-	}
-
 	CollisionBox = CreateDefaultSubobject<UBoxComponent>(TEXT("CollisionBox"));
-	CollisionBox->SetupAttachment(RootComponent);
+	CollisionBox->SetupAttachment(SceneRoot);
 
 	CollisionBox->OnComponentBeginOverlap.AddDynamic(this, &Agimmick1::OnOverlapBegin);
 
@@ -41,10 +30,6 @@ Agimmick1::Agimmick1()
 void Agimmick1::BeginPlay()
 {
 	Super::BeginPlay();
-
-	//SetActorLocation(FVector(0.0f, 0.0f, 90.0f));
-	//SetActorRotation(FRotator(0.0f, 0.0f, 0.0f));
-	//SetActorScale3D(FVector(2.0f));
 
 	StartLocation = GetActorLocation();
 }
@@ -110,5 +95,20 @@ void Agimmick1::OnOverlapBegin(UPrimitiveComponent* OverlappedComp
 			FVector LaunchDirection = GetActorUpVector() * JumpStrength;
 			Character->LaunchCharacter(LaunchDirection, false, true);
 		}
+	}
+}
+
+void Agimmick1::OnConstruction(const FTransform& Transform)
+{
+	Super::OnConstruction(Transform);
+
+	if (MaterialAssets)
+	{
+		StaticMeshComp->SetMaterial(0, MaterialAssets);
+	}
+
+	if (MeshAsset)
+	{
+		StaticMeshComp->SetStaticMesh(MeshAsset);
 	}
 }

@@ -1,4 +1,3 @@
-// gimmick.h
 
 #pragma once
 
@@ -19,17 +18,26 @@ protected:
 	int32 MovementType = 0;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "gimmick1|Components")
-	USceneComponent* SceneRoot;
-	UStaticMeshComponent* StaticMeshComp;
+	class USceneComponent* SceneRoot;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "gimmick1|Components")
+	class UStaticMeshComponent* StaticMeshComp;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "gimmick1|Assets")
+	class UMaterialInterface* MaterialAssets;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "gimmick1|Assets")
+	class UStaticMesh* MeshAsset;
 
 	FVector StartLocation;
 
-	float RotationSpeed;
-	float MoveSpeed;
-	float MoveDistance;
+	float RotationSpeed = 90.0f;
+	float MoveSpeed = 0.0f;
+	float MoveDistance = 0.0f;
 
-	virtual void BeginPlay() override; // 게임이 시작되거나 생성될때 호출
-	virtual void Tick(float DeltaTime) override; // 모든 프레임 호출
+	virtual void BeginPlay() override;
+	virtual void Tick(float DeltaTime) override;
+	virtual void OnConstruction(const FTransform& Transform) override;
 
 protected:
 	
@@ -55,5 +63,5 @@ protected:
 	UPROPERTY(EditAnywhere, Category = "Spawn")
 	float SpawnInterval = 0.5f;
 
-	float SpawnTimer = 0.f;
+	float SpawnTimer = 0.0f;
 };
