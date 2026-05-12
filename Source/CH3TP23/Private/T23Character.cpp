@@ -4,7 +4,8 @@
 #include "Camera/CameraComponent.h"
 #include "GameFramework/SpringArmComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
-//Ä¿¹Ô
+#include "T23Interface.h"
+
 
 AT23Character::AT23Character()
 {
@@ -90,7 +91,16 @@ void AT23Character::SetupPlayerInputComponent(UInputComponent* PlayerInputCompon
 					this,
 					&AT23Character::StopSprint
 				);
-
+			}
+			if (PlayerController->InteractAction)
+			{
+					EnhancedInput->BindAction(
+						PlayerController->InteractAction,
+						ETriggerEvent::Started,
+						this,
+						&AT23Character::Interact
+					);
+			
 			}
 		}
 
@@ -151,4 +161,46 @@ void AT23Character::StartSprint(const FInputActionValue& value)
 void AT23Character::StopSprint(const FInputActionValue& value)
 {
 	GetCharacterMovement()->MaxWalkSpeed = NormalSpeed;
+}
+
+void AT23Character::Interact()
+{
+	if (GEngine)
+	{
+		GEngine->AddOnScreenDebugMessage(
+			-1,
+			2.f,
+			FColor::Red,
+			TEXT("Press E ")
+		);
+	}
+
+	FVector Start = CameraComp->GetComponentLocation();
+
+	FVector End =
+		Start + (CameraComp->GetForwardVector() * 300.f);
+
+	FHitResult Hit;
+
+	FCollisionQueryParams Params;
+	Params.AddIgnoredActor(this);
+
+	bool bHit = GetWorld()->LineTraceSingleByChannel(
+		Hit,
+		Start,
+		End,
+		ECC_Visibility,
+		Params
+	);
+
+	if (bHit && Hit.GetActor())
+	{
+		IT23Interface* Interactable =
+			Cast<IT23Interface>(Hit.GetActor());
+
+		if (Interactable)
+		{
+			Interactable->Interact();
+		}
+	}
 }

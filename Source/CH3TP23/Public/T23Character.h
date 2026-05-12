@@ -49,6 +49,8 @@ protected:
 	UFUNCTION()
 	void StopSprint(const FInputActionValue& value);
 
+	void Interact();
+
 private:
 	float SprintSpeed; 
 	float NormalSpeed;
