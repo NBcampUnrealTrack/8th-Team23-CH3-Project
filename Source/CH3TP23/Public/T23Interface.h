@@ -18,6 +18,6 @@ class CH3TP23_API IT23Interface
 
 	
 public:
-
-	virtual void Interact() = 0;
+	UFUNCTION(BlueprintNativeEvent)
+	void Interact();
 };

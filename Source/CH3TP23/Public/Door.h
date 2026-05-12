@@ -25,6 +25,6 @@ public:
 	
 	virtual void Tick(float DeltaTime) override;
 
-	virtual void Interact() override;
+	virtual void Interact_Implementation();
 
 };
