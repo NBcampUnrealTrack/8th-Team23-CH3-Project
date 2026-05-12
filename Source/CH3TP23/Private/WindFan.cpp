@@ -19,17 +19,22 @@ AWindFan::AWindFan()
 
     WindArea = CreateDefaultSubobject<UBoxComponent>(TEXT("WindArea"));
     WindArea->SetupAttachment(SceneRoot);
-
-    WindArea->OnComponentBeginOverlap.AddDynamic(this, &AWindFan::OnOverlapBegin);
-
 }
 
 void AWindFan::BeginPlay()
 {
     Super::BeginPlay();
+
+    WindArea->OnComponentBeginOverlap.AddDynamic(this, &AWindFan::OnOverlapBegin);
 }
 
-void AWindFan::OnOverlapBegin(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
+void AWindFan::OnOverlapBegin(
+    UPrimitiveComponent* OverlappedComp,
+    AActor* OtherActor,
+    UPrimitiveComponent* OtherComp,
+    int32 OtherBodyIndex,
+    bool bFromSweep,
+    const FHitResult& SweepResult)
 {
     if (WindType == EWindType::Constant) return;
 
@@ -40,7 +45,7 @@ void AWindFan::OnOverlapBegin(UPrimitiveComponent* OverlappedComp, AActor* Other
         FVector LaunchDir = Character->GetActorLocation() - GetActorLocation();
         LaunchDir.Normalize();
 
-        Character->LaunchCharacter(LaunchDir * BounceStrength, true, true);
+        Character->LaunchCharacter(LaunchDir * BounceStrength * 1.5f, true, true);
     }
 }
 
@@ -60,7 +65,8 @@ void AWindFan::Tick(float DeltaTime)
         if (Character) 
         {
             FVector PushDir = GetActorForwardVector();
-            Character->GetCharacterMovement()->AddForce(PushDir * ConstantStrength * 100000.0f);
+            //Character->GetCharacterMovement()->AddForce(PushDir * ConstantStrength * true);
+            Character->LaunchCharacter(PushDir * ConstantStrength * DeltaTime, false, false);
         }
     }
 }

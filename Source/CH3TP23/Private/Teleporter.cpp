@@ -26,7 +26,8 @@ void ATeleporter::BeginPlay()
     TeleportVolume->OnComponentBeginOverlap.AddDynamic(this, &ATeleporter::OnOverlapBegin);
 }
 
-void ATeleporter::OnOverlapBegin(UPrimitiveComponent* OverlappedComp,
+void ATeleporter::OnOverlapBegin(
+    UPrimitiveComponent* OverlappedComp,
     AActor* OtherActor,
     UPrimitiveComponent* OtherComp,
     int32 OtherBodyIndex,

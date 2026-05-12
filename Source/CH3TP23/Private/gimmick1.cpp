@@ -66,17 +66,6 @@ void Agimmick1::Tick(float DeltaTime)
 			}
 		}
 	}
-
-	else if (MovementType == 4)
-	{
-		SpawnTimer += DeltaTime;
-		if (SpawnTimer >= SpawnInterval && ActorClassToSpawn)
-		{
-			SpawnTimer = 0.f;
-			FVector SpawnPos = GetActorLocation() + FVector(FMath::RandRange(-200.f, 200.f), FMath::RandRange(-200.f, 200.f), 0.f);
-			GetWorld()->SpawnActor<AActor>(ActorClassToSpawn, SpawnPos, FRotator::ZeroRotator);
-		}
-	}
 }
 
 void Agimmick1::OnOverlapBegin(UPrimitiveComponent* OverlappedComp

@@ -56,12 +56,4 @@ protected:
 		, bool bFromSweep
 		, const FHitResult& SweepResult);
 
-protected:
-	UPROPERTY(EditAnywhere, Category = "Spawn")
-	TSubclassOf<AActor> ActorClassToSpawn;
-
-	UPROPERTY(EditAnywhere, Category = "Spawn")
-	float SpawnInterval = 0.5f;
-
-	float SpawnTimer = 0.0f;
 };
