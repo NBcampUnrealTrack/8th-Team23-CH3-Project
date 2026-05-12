@@ -31,6 +31,8 @@ AT23Character::AT23Character()
 	 SprintSpeed = NormalSpeed * SprintSpeedMultiplier;
 
 	GetCharacterMovement()->MaxWalkSpeed = NormalSpeed;
+
+	GetCharacterMovement()->NavAgentProps.bCanCrouch = true;
 }
 
 
@@ -94,15 +96,34 @@ void AT23Character::SetupPlayerInputComponent(UInputComponent* PlayerInputCompon
 			}
 			if (PlayerController->InteractAction)
 			{
-					EnhancedInput->BindAction(
-						PlayerController->InteractAction,
-						ETriggerEvent::Started,
-						this,
-						&AT23Character::Interact
-					);
-			
+				EnhancedInput->BindAction(
+					PlayerController->InteractAction,
+					ETriggerEvent::Started,
+					this,
+					&AT23Character::Interact
+				);
 			}
+			if (PlayerController->CrouchAction)
+			{
+					EnhancedInput->BindAction(
+					PlayerController->CrouchAction,
+					ETriggerEvent::Started,
+					this,
+					&AT23Character::StartCrouch
+				);
+
+					EnhancedInput->BindAction(
+					PlayerController->CrouchAction,
+					ETriggerEvent::Completed,
+					this,
+					&AT23Character::StopCrouch
+				);
+			}
+		
+		
+
 		}
+
 
 	}
 
@@ -195,12 +216,18 @@ void AT23Character::Interact()
 
 	if (bHit && Hit.GetActor())
 	{
-		IT23Interface* Interactable =
-			Cast<IT23Interface>(Hit.GetActor());
-
-		if (Interactable)
+		if (Hit.GetActor()->Implements<UT23Interface>())
 		{
-			Interactable->Interact();
+			IT23Interface::Execute_Interact(Hit.GetActor());
 		}
 	}
+}
+void AT23Character::StartCrouch()
+{
+	Crouch();
+}
+
+void AT23Character::StopCrouch()
+{
+	UnCrouch();
 }

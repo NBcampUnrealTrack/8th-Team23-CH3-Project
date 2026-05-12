@@ -50,11 +50,15 @@ protected:
 	void StopSprint(const FInputActionValue& value);
 
 	void Interact();
+	void StartCrouch();
+	void StopCrouch();
+	
 
 private:
 	float SprintSpeed; 
 	float NormalSpeed;
 	float SprintSpeedMultiplier;
-
+	
+	
 };
 

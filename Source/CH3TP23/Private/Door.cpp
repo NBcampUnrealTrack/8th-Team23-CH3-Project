@@ -27,7 +27,7 @@ void ADoor::Tick(float DeltaTime)
 	Super::Tick(DeltaTime);
 
 }
-void ADoor::Interact()
+void ADoor::Interact_Implementation()
 {
 	UE_LOG(LogTemp, Warning, TEXT("Open the door"));
 }
