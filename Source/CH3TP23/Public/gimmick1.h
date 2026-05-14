@@ -31,10 +31,6 @@ protected:
 
 	FVector StartLocation;
 
-	float RotationSpeed = 90.0f;
-	float MoveSpeed = 0.0f;
-	float MoveDistance = 0.0f;
-
 	virtual void BeginPlay() override;
 	virtual void Tick(float DeltaTime) override;
 	virtual void OnConstruction(const FTransform& Transform) override;
