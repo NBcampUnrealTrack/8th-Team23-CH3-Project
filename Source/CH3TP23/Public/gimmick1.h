@@ -30,6 +30,8 @@ protected:
 	class UStaticMesh* MeshAsset;
 
 	FVector StartLocation;
+	float MoveSpeed = 0.0f;
+	float MoveDistance = 0.0f;
 
 	virtual void BeginPlay() override;
 	virtual void Tick(float DeltaTime) override;
@@ -43,6 +45,10 @@ protected:
 	UPROPERTY(EditAnywhere, Category = "Gimmick1")
 	float JumpStrength = 750.0f;
 	float WindStrength = 100.f; // ¼±Ç³±â ¹Ð¾î³»´Â Èû
+	float RotationSpeed = 90.0f;
+
+	 
+
 
 	UFUNCTION()
 	void OnOverlapBegin(UPrimitiveComponent* OverlappedComp

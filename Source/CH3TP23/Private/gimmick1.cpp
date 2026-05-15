@@ -45,12 +45,12 @@ void Agimmick1::Tick(float DeltaTime)
 
 	else if (MovementType == 1)
 	{
-		FVector NewLocation = StartLocation;
+		float MovementScale = FMath::Sin(GetGameTimeSinceCreation() * MoveSpeed);
 
-		float Movement = FMath::Sin(GetGameTimeSinceCreation() * MoveSpeed) * MoveDistance;
-		NewLocation.X += Movement;
+		FVector Direction = GetActorForwardVector();
+		FVector NewLocation = StartLocation + (Direction * MovementScale * MoveDistance);
+
 		SetActorLocation(NewLocation);
-
 		//AddActorLocalOffset(FVector(0.0f, 100.0f, 160.0f));
 	}
 
@@ -90,6 +90,8 @@ void Agimmick1::OnOverlapBegin(UPrimitiveComponent* OverlappedComp
 void Agimmick1::OnConstruction(const FTransform& Transform)
 {
 	Super::OnConstruction(Transform);
+
+	StartLocation = GetActorLocation();
 
 	if (MaterialAssets)
 	{
