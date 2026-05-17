@@ -5,6 +5,8 @@
 #include "GameFramework/SpringArmComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "T23Interface.h"
+#include "HUDWidget.h"
+#include "Blueprint/UserWidget.h"
 
 
 AT23Character::AT23Character()
@@ -33,6 +35,13 @@ AT23Character::AT23Character()
 	GetCharacterMovement()->MaxWalkSpeed = NormalSpeed;
 
 	GetCharacterMovement()->NavAgentProps.bCanCrouch = true;
+
+	PrimaryActorTick.bCanEverTick = true;
+
+	ElapsedTime = 0.f;
+
+	BestScore = 0;
+
 }
 
 
@@ -231,3 +240,57 @@ void AT23Character::StopCrouch()
 {
 	UnCrouch();
 }
+
+void AT23Character::BeginPlay()
+{
+	Super::BeginPlay();
+
+	StartZ = GetActorLocation().Z;
+
+	if (HUDWidgetClass)
+	{
+		HUDWidget =
+			CreateWidget<UHUDWidget>(
+				GetWorld(),
+				HUDWidgetClass);
+
+		if (HUDWidget)
+		{
+			
+
+			HUDWidget->AddToViewport();
+		}
+	}
+}
+
+void AT23Character::Tick(float DeltaTime)
+{
+	Super::Tick(DeltaTime);
+
+	ElapsedTime += DeltaTime;
+
+	float CurrentZ = GetActorLocation().Z;
+
+	float Height =
+		(CurrentZ - StartZ) / 100.f;
+
+	Height = FMath::Max(0.f, Height);
+
+	CurrentScore = Height * 10;
+
+	BestScore = FMath::Max(
+		BestScore,
+		CurrentScore);
+
+	if (HUDWidget)
+	{
+		HUDWidget->UpdateHeight(Height);
+
+		HUDWidget->UpdateTime(ElapsedTime);
+
+		HUDWidget->UpdateScore(CurrentScore);
+
+		HUDWidget->UpdateBestScore(BestScore);
+	}
+}
+

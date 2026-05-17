@@ -7,6 +7,7 @@
 
 class USpringArmComponent;
 class UCameraComponent;
+class UHUDWidget;
 struct FInputActionValue;
 
 UCLASS()
@@ -23,6 +24,19 @@ public:
 	
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Camera")
 	UCameraComponent* CameraComp;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "UI")
+	TSubclassOf<UUserWidget> HUDWidgetClass;
+
+	UPROPERTY()
+	UHUDWidget* HUDWidget;
+
+	float StartZ;
+
+
+
+	virtual void Tick(float DeltaTime) override;
+	virtual void BeginPlay() override;
 
 protected:
 
@@ -58,6 +72,10 @@ private:
 	float SprintSpeed; 
 	float NormalSpeed;
 	float SprintSpeedMultiplier;
+	float ElapsedTime;
+
+	int32 CurrentScore;
+	int32 BestScore;
 	
 	
 };
