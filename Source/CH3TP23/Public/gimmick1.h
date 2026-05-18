@@ -31,8 +31,15 @@ protected:
 	class UStaticMesh* MeshAsset;
 
 	FVector StartLocation;
-	float MoveSpeed = 0.0f;
-	float MoveDistance = 0.0f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "gimmick1|Rotation", meta = (EditCondition = "MovementType == 0"))
+	float RotationSpeed = 90.0f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "gimmick1|Movement", meta = (EditCondition = "MovementType == 1"))
+	float MoveSpeed = 5.0f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "gimmick1|Movement", meta = (EditCondition = "MovementType == 1"))
+	float MoveDistance = 200.0f;
 
 	virtual void BeginPlay() override;
 	virtual void Tick(float DeltaTime) override;
