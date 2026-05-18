@@ -1,3 +1,5 @@
+//Teleporter.h
+
 #pragma once
 
 #include "CoreMinimal.h"
@@ -16,6 +18,7 @@ protected:
     virtual void BeginPlay() override;
 
 protected:
+
     UPROPERTY(VisibleAnywhere, Category = "Teleporter")
     class USceneComponent* SceneRoot;
 
@@ -29,10 +32,12 @@ protected:
     class ATeleporter* TargetPortal;
 
     bool bCanTeleport = true;
+
     FTimerHandle TeleportCooldownTimerHandle;
 
     UFUNCTION()
-    void OnOverlapBegin(UPrimitiveComponent* OverlappedComp,
+    void OnOverlapBegin(
+        UPrimitiveComponent* OverlappedComp,
         AActor* OtherActor,
         UPrimitiveComponent* OtherComp,
         int32 OtherBodyIndex,

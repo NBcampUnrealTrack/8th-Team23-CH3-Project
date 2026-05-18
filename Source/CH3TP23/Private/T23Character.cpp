@@ -1,3 +1,5 @@
+//T23Character.cpp
+
 #include "T23Character.h"
 #include "T23PlayerController.h"
 #include "EnhancedInputComponent.h"
@@ -8,49 +10,48 @@
 #include "HUDWidget.h"
 #include "Blueprint/UserWidget.h"
 
-
 AT23Character::AT23Character()
 {
- 	
-	PrimaryActorTick.bCanEverTick = false;
+	PrimaryActorTick.bCanEverTick = true;
 
 	SpringArmComp = CreateDefaultSubobject<USpringArmComponent>(TEXT("SpringArm"));
 	SpringArmComp->SetupAttachment(RootComponent);
 	SpringArmComp->TargetArmLength = 300.0f;
 	SpringArmComp->bUsePawnControlRotation = true;
 
-
 	CameraComp = CreateDefaultSubobject<UCameraComponent>(TEXT("Camera"));
 	CameraComp->SetupAttachment(SpringArmComp, USpringArmComponent::SocketName);
 	CameraComp->bUsePawnControlRotation = false;
 
-	 
-	
-	 NormalSpeed = 250.0f;
-	
-	 SprintSpeedMultiplier = 2.0f;
-	 
-	 SprintSpeed = NormalSpeed * SprintSpeedMultiplier;
+	NormalSpeed = 250.0f;
+
+	SprintSpeedMultiplier = 2.0f;
+
+	SprintSpeed = NormalSpeed * SprintSpeedMultiplier;
 
 	GetCharacterMovement()->MaxWalkSpeed = NormalSpeed;
 
 	GetCharacterMovement()->NavAgentProps.bCanCrouch = true;
 
-	PrimaryActorTick.bCanEverTick = true;
-
 	ElapsedTime = 0.f;
 
 	BestScore = 0;
 
-}
+	CurrentScore = 0;
 
+	// 처음에는 점수 계산 안함
+	bCanCalculateScore = false;
+}
 
 void AT23Character::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
-	if (UEnhancedInputComponent* EnhancedInput = Cast<UEnhancedInputComponent>(PlayerInputComponent))
+
+	if (UEnhancedInputComponent* EnhancedInput =
+		Cast<UEnhancedInputComponent>(PlayerInputComponent))
 	{
-		if (AT23PlayerController* PlayerController = Cast<AT23PlayerController>(GetController()))
+		if (AT23PlayerController* PlayerController =
+			Cast<AT23PlayerController>(GetController()))
 		{
 			if (PlayerController->MoveAction)
 			{
@@ -61,6 +62,7 @@ void AT23Character::SetupPlayerInputComponent(UInputComponent* PlayerInputCompon
 					&AT23Character::Move
 				);
 			}
+
 			if (PlayerController->JumpAction)
 			{
 				EnhancedInput->BindAction(
@@ -76,8 +78,8 @@ void AT23Character::SetupPlayerInputComponent(UInputComponent* PlayerInputCompon
 					this,
 					&AT23Character::StopJump
 				);
-
 			}
+
 			if (PlayerController->LookAction)
 			{
 				EnhancedInput->BindAction(
@@ -87,6 +89,7 @@ void AT23Character::SetupPlayerInputComponent(UInputComponent* PlayerInputCompon
 					&AT23Character::Look
 				);
 			}
+
 			if (PlayerController->SprintAction)
 			{
 				EnhancedInput->BindAction(
@@ -103,6 +106,7 @@ void AT23Character::SetupPlayerInputComponent(UInputComponent* PlayerInputCompon
 					&AT23Character::StopSprint
 				);
 			}
+
 			if (PlayerController->InteractAction)
 			{
 				EnhancedInput->BindAction(
@@ -112,30 +116,25 @@ void AT23Character::SetupPlayerInputComponent(UInputComponent* PlayerInputCompon
 					&AT23Character::Interact
 				);
 			}
+
 			if (PlayerController->CrouchAction)
 			{
-					EnhancedInput->BindAction(
+				EnhancedInput->BindAction(
 					PlayerController->CrouchAction,
 					ETriggerEvent::Started,
 					this,
 					&AT23Character::StartCrouch
 				);
 
-					EnhancedInput->BindAction(
+				EnhancedInput->BindAction(
 					PlayerController->CrouchAction,
 					ETriggerEvent::Completed,
 					this,
 					&AT23Character::StopCrouch
 				);
 			}
-		
-		
-
 		}
-
-
 	}
-
 }
 
 void AT23Character::Move(const FInputActionValue& value)
@@ -177,7 +176,6 @@ void AT23Character::Look(const FInputActionValue& value)
 
 	AddControllerYawInput(LookInput.X);
 	AddControllerPitchInput(LookInput.Y);
-
 }
 
 void AT23Character::StartSprint(const FInputActionValue& value)
@@ -231,6 +229,7 @@ void AT23Character::Interact()
 		}
 	}
 }
+
 void AT23Character::StartCrouch()
 {
 	Crouch();
@@ -256,8 +255,6 @@ void AT23Character::BeginPlay()
 
 		if (HUDWidget)
 		{
-			
-
 			HUDWidget->AddToViewport();
 		}
 	}
@@ -267,6 +264,12 @@ void AT23Character::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
+	// 포탈 타기 전에는 계산 안함
+	if (!bCanCalculateScore)
+	{
+		return;
+	}
+	//
 	ElapsedTime += DeltaTime;
 
 	float CurrentZ = GetActorLocation().Z;
@@ -294,3 +297,13 @@ void AT23Character::Tick(float DeltaTime)
 	}
 }
 
+void AT23Character::StartScoreSystem()
+{
+	bCanCalculateScore = true;
+
+	StartZ = GetActorLocation().Z;
+
+	CurrentScore = 0;
+
+	ElapsedTime = 0.f;
+}

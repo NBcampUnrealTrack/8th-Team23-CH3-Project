@@ -1,3 +1,5 @@
+//T23Character.h
+
 #pragma once
 
 #include "CoreMinimal.h"
@@ -16,12 +18,12 @@ class CH3TP23_API AT23Character : public ACharacter
 	GENERATED_BODY()
 
 public:
-	
+
 	AT23Character();
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Camera")
 	USpringArmComponent* SpringArmComp;
-	
+
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Camera")
 	UCameraComponent* CameraComp;
 
@@ -33,50 +35,48 @@ public:
 
 	float StartZ;
 
-
-
+	// 포탈 탑승 후 점수 계산 시작
+	void StartScoreSystem();
+	//
 	virtual void Tick(float DeltaTime) override;
 	virtual void BeginPlay() override;
 
 protected:
 
-	
-	
-	
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
-	
+
 	UFUNCTION()
 	void Move(const FInputActionValue& value);
-	
+
 	UFUNCTION()
 	void StartJump(const FInputActionValue& value);
-	
+
 	UFUNCTION()
 	void StopJump(const FInputActionValue& value);
-	
+
 	UFUNCTION()
 	void Look(const FInputActionValue& value);
-	
+
 	UFUNCTION()
 	void StartSprint(const FInputActionValue& value);
-	
+
 	UFUNCTION()
 	void StopSprint(const FInputActionValue& value);
 
 	void Interact();
 	void StartCrouch();
 	void StopCrouch();
-	
 
 private:
-	float SprintSpeed; 
+
+	float SprintSpeed;
 	float NormalSpeed;
 	float SprintSpeedMultiplier;
 	float ElapsedTime;
 
+	// 점수 계산 가능 여부
+	bool bCanCalculateScore;
+	//
 	int32 CurrentScore;
 	int32 BestScore;
-	
-	
 };
-
