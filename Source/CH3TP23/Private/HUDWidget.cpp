@@ -62,3 +62,5 @@ void UHUDWidget::UpdateBestScore(int32 BestScore)
             FText::FromString(BestScoreString));
     }
 }
+
+//UI복구 업로드
