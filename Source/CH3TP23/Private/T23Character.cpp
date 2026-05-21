@@ -6,9 +6,12 @@
 #include "Camera/CameraComponent.h"
 #include "GameFramework/SpringArmComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
+#include "GameFramework/PlayerController.h"
 #include "T23Interface.h"
 #include "HUDWidget.h"
 #include "Blueprint/UserWidget.h"
+#include "Kismet/GameplayStatics.h"
+
 
 AT23Character::AT23Character()
 {
@@ -133,6 +136,11 @@ void AT23Character::SetupPlayerInputComponent(UInputComponent* PlayerInputCompon
 					&AT23Character::StopCrouch
 				);
 			}
+				EnhancedInput->BindAction(
+				PauseAction,
+				ETriggerEvent::Started,
+				this,
+				&AT23Character::TogglePauseMenu);
 		}
 	}
 }
@@ -246,6 +254,18 @@ void AT23Character::BeginPlay()
 
 	StartZ = GetActorLocation().Z;
 
+	APlayerController* PlayerController =
+		GetWorld()->GetFirstPlayerController();
+
+	if (PlayerController)
+	{
+		PlayerController->bShowMouseCursor = false;
+
+		FInputModeGameOnly InputMode;
+
+		PlayerController->SetInputMode(InputMode);
+	}
+
 	if (HUDWidgetClass)
 	{
 		HUDWidget =
@@ -306,4 +326,58 @@ void AT23Character::StartScoreSystem()
 	CurrentScore = 0;
 
 	ElapsedTime = 0.f;
+}
+
+void AT23Character::TogglePauseMenu()
+{
+	APlayerController* PlayerController =
+		GetWorld()->GetFirstPlayerController();
+
+	if (!PlayerController) return;
+
+	bool bIsPaused =
+		UGameplayStatics::IsGamePaused(GetWorld());
+
+	if (!bIsPaused)
+	{
+		UGameplayStatics::SetGamePaused(
+			GetWorld(),
+			true);
+
+		if (PauseWidgetClass)
+		{
+			PauseWidget =
+				CreateWidget<UUserWidget>(
+					GetWorld(),
+					PauseWidgetClass);
+
+			if (PauseWidget)
+			{
+				PauseWidget->AddToViewport();
+			}
+		}
+
+		PlayerController->bShowMouseCursor = true;
+
+		FInputModeUIOnly InputMode;
+
+		PlayerController->SetInputMode(InputMode);
+	}
+	else
+	{
+		UGameplayStatics::SetGamePaused(
+			GetWorld(),
+			false);
+
+		if (PauseWidget)
+		{
+			PauseWidget->RemoveFromParent();
+		}
+
+		PlayerController->bShowMouseCursor = false;
+
+		FInputModeGameOnly InputMode;
+
+		PlayerController->SetInputMode(InputMode);
+	}
 }

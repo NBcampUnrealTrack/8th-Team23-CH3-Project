@@ -10,6 +10,7 @@
 class USpringArmComponent;
 class UCameraComponent;
 class UHUDWidget;
+class UInputAction;
 struct FInputActionValue;
 
 UCLASS()
@@ -29,6 +30,15 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "UI")
 	TSubclassOf<UUserWidget> HUDWidgetClass;
+
+	UPROPERTY(EditAnywhere, Category = "UI")
+	TSubclassOf<UUserWidget> PauseWidgetClass;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Input")
+	UInputAction* PauseAction;
+
+	UPROPERTY()
+	UUserWidget* PauseWidget;
 
 	UPROPERTY()
 	UHUDWidget* HUDWidget;
@@ -63,10 +73,13 @@ protected:
 	UFUNCTION()
 	void StopSprint(const FInputActionValue& value);
 
+	UFUNCTION(BlueprintCallable)
+	void TogglePauseMenu();
+
 	void Interact();
 	void StartCrouch();
 	void StopCrouch();
-
+	
 private:
 
 	float SprintSpeed;
