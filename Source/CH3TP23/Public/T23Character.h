@@ -11,6 +11,7 @@ class USpringArmComponent;
 class UCameraComponent;
 class UHUDWidget;
 class UInputAction;
+class USpotLightComponent; //스포트라이트 선언
 struct FInputActionValue;
 
 UCLASS()
@@ -27,6 +28,14 @@ public:
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Camera")
 	UCameraComponent* CameraComp;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Light")
+	USpotLightComponent* HeadLightComp;
+	//헤드라이트 컴포넌트 선언
+
+	UFUNCTION(BlueprintCallable, Category = "Light")
+	void SetHeadlightEnabled(bool bIsNight);
+	//밤낮에 변화에 따른 헤드라이트on/off
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "UI")
 	TSubclassOf<UUserWidget> HUDWidgetClass;

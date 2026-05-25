@@ -7,6 +7,7 @@
 #include "GameFramework/SpringArmComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "GameFramework/PlayerController.h"
+#include "Components/SpotLightComponent.h"
 #include "T23Interface.h"
 #include "HUDWidget.h"
 #include "Blueprint/UserWidget.h"
@@ -25,6 +26,17 @@ AT23Character::AT23Character()
 	CameraComp = CreateDefaultSubobject<UCameraComponent>(TEXT("Camera"));
 	CameraComp->SetupAttachment(SpringArmComp, USpringArmComponent::SocketName);
 	CameraComp->bUsePawnControlRotation = false;
+
+	//조명 생성 및 설정
+	HeadLightComp = CreateDefaultSubobject<USpotLightComponent>(TEXT("HeadLight"));
+	HeadLightComp->SetupAttachment(CameraComp);
+
+	HeadLightComp->Intensity = 3000.0f;          // 빛의 밝기
+	HeadLightComp->AttenuationRadius = 3000.0f;  // 빛이 도달하는 최대 거리
+	HeadLightComp->InnerConeAngle = 30.0f;       // 안쪽 밝은 빛의 각도
+	HeadLightComp->OuterConeAngle = 45.0f;       // 바깥쪽 퍼지는 빛의 각도
+	// 조명 위치 미세 조정
+	HeadLightComp->SetRelativeLocation(FVector(30.0f, 0.0f, 0.0f));
 
 	NormalSpeed = 250.0f;
 
@@ -319,6 +331,11 @@ void AT23Character::Tick(float DeltaTime)
 
 void AT23Character::StartScoreSystem()
 {
+	if (bCanCalculateScore) //딱 한번만
+	{
+		return; 
+	}
+
 	bCanCalculateScore = true;
 
 	StartZ = GetActorLocation().Z;
@@ -326,6 +343,7 @@ void AT23Character::StartScoreSystem()
 	CurrentScore = 0;
 
 	ElapsedTime = 0.f;
+
 }
 
 void AT23Character::TogglePauseMenu()
@@ -379,5 +397,14 @@ void AT23Character::TogglePauseMenu()
 		FInputModeGameOnly InputMode;
 
 		PlayerController->SetInputMode(InputMode);
+	}
+}
+
+//밤낮에 변화에 따른 헤드라이트on/off
+void AT23Character::SetHeadlightEnabled(bool bIsNight)
+{
+	if (HeadLightComp)
+	{
+		HeadLightComp->SetVisibility(bIsNight);
 	}
 }

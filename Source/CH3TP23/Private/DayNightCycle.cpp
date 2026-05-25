@@ -35,7 +35,7 @@ ADayNightCycle::ADayNightCycle()
     MoonLight->SetIntensity(MaxMoonIntensity);
 
     // 초기 각도 설정 (-90도는 정오를 의미)
-    CurrentRotationAngle = -90.0f;
+    CurrentRotationAngle = -150.0f;
 }
 
 void ADayNightCycle::BeginPlay()
